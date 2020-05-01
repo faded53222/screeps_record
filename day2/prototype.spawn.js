@@ -5,18 +5,20 @@ const creepConfigs=[ [[WORK,WORK,CARRY,MOVE], //harvester
                       [WORK,WORK,CARRY,MOVE],//builder
                       [],//carrier
                       [],//defender
-                      [WORK,CARRY,CARRY,MOVE]//picker
+                      [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE],//picker
+                      [WORK,CARRY,MOVE]//repairer
                      ],//lv1
                       [[WORK,WORK,WORK,WORK,WORK,MOVE], //harvester
                       [WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE],//upgrader
                       [WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE],//builder
                       [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH],//carrier
                       [],//defender
-                      [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE]//picker
+                      [CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE],//picker
+                      [WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE]//repairer
                      ]//lv2
                     ]
 
-var role_name_lis=['harvester','upgrader','builder','carrier','defender','picker'];
+var role_name_lis=['harvester','upgrader','builder','carrier','defender','picker','repairer'];
 Spawn.prototype.construct=function(struct){
   for(let eve of spawn.memory.constructList){
         if(eve[0]==struct[0] && eve[1]==struct[1] && eve[2]==struct[2]){
@@ -49,7 +51,7 @@ Spawn.prototype.work = function() {
             }
         }
     }
-    if(!this.memory.spawnList || this.memory.spawnList.length == 0){
+    if(!this.memory.spawnList || this.memory.spawnList.length==0){
         this.memory.urgent_produce=0;
     }
     if (!(this.spawning || !this.memory.spawnList || this.memory.spawnList.length == 0)){
@@ -103,6 +105,12 @@ Spawn.prototype.mainSpawn = function(task_urgency) {
     }
     if(task[0]==5){
         var spawnSuccess=this.spawnCreep(Body, Name, {memory: {role: task[0],lv: task[1],mother: this.name,picking: false} }); 
+    }
+    if(task[0]==6){
+        var spawnSuccess=this.spawnCreep(Body, Name, {memory: {role: task[0],lv: task[1],mother: this.name,repairing: false,repair_site:[-1,-1]} }); 
+    }
+    if(this.spawning){
+        this.memory.urgent_produce=1;
     }
     return spawnSuccess;
 }

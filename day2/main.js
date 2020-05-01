@@ -3,7 +3,7 @@ require('prototype.spawn');
 require('prototype.tower');
 module.exports.loop = function () {
     for(var name in Game.spawns){
-        console.log(Game.spawns[name].memory.spawnList);
+        //console.log(Game.spawns[name].memory.spawnList);
         Game.spawns[name].runMod();
     }
     for(var name in Memory.creeps){

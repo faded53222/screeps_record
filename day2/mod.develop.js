@@ -114,10 +114,11 @@ var modDevelop = {
                 }
             }
             spawn.addTask([1,1]);
-             for(var j=0;j<3;j++){
+             for(var j=0;j<4;j++){
                 spawn.addTask([2,1]);
              }
              spawn.addTask([5,1]);
+             spawn.addTask([6,1]); 
         }
         if(spawn.memory.lv==1 && spawn.room.controller.level==2){
             spawn.memory.lv+=1;
@@ -218,6 +219,7 @@ var modDevelop = {
                 spawn.addTask([2,2]);
             }
             spawn.addTask([5,2]);
+            spawn.addTask([6,2]);
         }
         if(spawn.memory.lv==2){
             if(spawn.memory.capacity_lv==1 && spawn.room.energyCapacityAvailable>=550){
