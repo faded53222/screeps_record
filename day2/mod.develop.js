@@ -6,8 +6,11 @@ var modDevelop = {
             spawn.memory.mod=0;
             spawn.memory.spawnList=[];
             spawn.memory.constructList=[];
+            spawn.memory.renewing=0;
+            spawn.memory.renew_lis=[];
         }
         if(spawn.memory.lv==0){
+            spawn.memory.souces_list=[];
             spawn.memory.sources={};
             spawn.memory.urgent_produce=0;
             spawn.memory.lv+=1;
@@ -71,6 +74,7 @@ var modDevelop = {
                 for(let d of path_){
                     spawn.construct([d['x'],d['y'],STRUCTURE_ROAD]);
                 }
+                spawn.memory.souces_list.push([pos_x,pos_y]);
                 spawn.memory.sources[[pos_x,pos_y]]=0;
                 var a_s=[];
                 for(let i of [-1,0,1]){
@@ -214,16 +218,27 @@ var modDevelop = {
                     break;
                 }
             }
-            spawn.addTask([1,2]);
-            for(var jj=0;jj<2;jj++){
-                spawn.addTask([2,2]);
-            }
-            spawn.addTask([5,2]);
-            spawn.addTask([6,2]);
         }
         if(spawn.memory.lv==2){
             if(spawn.memory.capacity_lv==1 && spawn.room.energyCapacityAvailable>=550){
                 spawn.memory.capacity_lv+=1;
+                spawn.addTask([1,2]);
+                spawn.addTask([5,2]);
+                spawn.addTask([6,2]);
+                for(var jj=0;jj<2;jj++){
+                    spawn.addTask([2,2]);
+                }
+                for(var ev=0;ev<spawn.memory.spawnList.length;ev++){
+                    if(spawn.memory.spawnList[ev][0][1]==1 && spawn.memory.spawnList[ev][0][0]!=0){
+                        spawn.memory.spawnList.splice(ev,1);
+                        ev-=1;
+                    }
+                }
+                for(var name in Game.creeps){
+                    if(Game.creeps[name].memory.lv==1 && Game.creeps[name].memory.role!=0 && Game.creeps[name].memory.role!=5){
+                        Game.creeps[name].Recycle();
+                    }
+                }
             }
             if(spawn.memory.building_container==1){
                 var lab2=0;
@@ -231,7 +246,6 @@ var modDevelop = {
                     var lab=0;
                     var lab0=0;
                     var each=spawn.memory.harvest_pos[c];
-                    var each0=Object.keys(spawn.memory.sources)[c];
                     var things=spawn.room.lookAt(each[0],each[1]);
                     for(let eve of spawn.memory.constructList){
                         if(eve[0]==each[0] && eve[1]==each[1] && eve[2]=='container'){
@@ -245,7 +259,7 @@ var modDevelop = {
                                 lab=1;
                                 break;
                             }
-                            if(one['type']=='structuresite' && one['structuresite'].structureType=='container'){
+                            if(one['type']=='constructionSite' && one['constructionSite'].structureType=='container'){
                                 lab0=1;
                                 break;
                             }
@@ -260,22 +274,47 @@ var modDevelop = {
                         spawn.construct([each[0],each[1],STRUCTURE_CONTAINER]);
                         if(c!=0){
                             spawn.addUrgentTask([3,2,[spawn.memory.harvest_pos[c-1][0],spawn.memory.harvest_pos[c-1][1]]]);
-                            spawn.addUrgentTask([0,2,[Object.keys(spawn.memory.sources)[c-1][0],Object.keys(spawn.memory.sources)[c-1][1]],[spawn.memory.harvest_pos[c-1][0],spawn.memory.harvest_pos[c-1][1]]]);
-                            for(var name in Game.creeps){                       
-                                if(Game.creeps[name].memory.role==0 && Game.creeps[name].memory.site2==[spawn.memory.harvest_pos[c-1][0],spawn.memory.harvest_pos[c-1][1]]){
-                                    Game.creeps[name].memory.reborn=0;
+                            spawn.addUrgentTask([0,2,[spawn.memory.sources_list[c-1][0],spawn.memory.sources_list[c-1][1]],[spawn.memory.harvest_pos[c-1][0],spawn.memory.harvest_pos[c-1][1]]]);
+                             for(var name in Game.creeps){          
+                                if(Game.creeps[name].memory.role==0){
+                                    if(Game.creeps[name].memory.site1[0]==Game.spawns[Game.creeps[name].memory.mother].memory.sources_list[c-1][0]
+                                      && Game.creeps[name].memory.site1[1]==Game.spawns[Game.creeps[name].memory.mother].memory.sources_list[c-1][1]){
+                                        Game.creeps[name].Recycle();
+                                    }
+                                    }
                                 }
+                        for(var ev=0;ev<spawn.memory.spawnList.length;ev++){
+                            if(spawn.memory.spawnList[ev][0][1]==1 && spawn.memory.spawnList[ev][0][0]==0 &&
+                            spawn.memory.spawnList[ev][0][3][0]==spawn.memory.harvest_pos[c-1][0]&&
+                            spawn.memory.spawnList[ev][0][3][1]==spawn.memory.harvest_pos[c-1][1]){
+                                spawn.memory.spawnList.splice(ev,1);
+                                ev-=1;
                             }
-                            for(var name in Game.creeps){                       
-                                if(Game.creeps[name].memory.role==3 && Game.creeps[name].memory.site1==[spawn.memory.harvest_pos[c-1][0],spawn.memory.harvest_pos[c-1][1]]){
-                                    Game.creeps[name].memory.reborn=0;
-                                }
-                            }
+                        }
                         }
                         break;
                     }
-                    }
+                }
                 if(lab2==0){
+                    var c=spawn.memory.harvest_pos.length;
+                    spawn.addUrgentTask([3,2,[spawn.memory.harvest_pos[c-1][0],spawn.memory.harvest_pos[c-1][1]]]);
+                    spawn.addUrgentTask([0,2,[spawn.memory.sources_list[c-1][0],spawn.memory.sources_list[c-1][1]],[spawn.memory.harvest_pos[c-1][0],spawn.memory.harvest_pos[c-1][1]]]);
+                     for(var name in Game.creeps){          
+                        if(Game.creeps[name].memory.role==0){
+                            if(Game.creeps[name].memory.site1[0]==Game.spawns[Game.creeps[name].memory.mother].memory.sources_list[c-1][0]
+                              && Game.creeps[name].memory.site1[1]==Game.spawns[Game.creeps[name].memory.mother].memory.sources_list[c-1][1]){
+                                Game.creeps[name].Recycle();
+                            }
+                            }
+                        }
+                    for(var ev=0;ev<spawn.memory.spawnList.length;ev++){
+                        if(spawn.memory.spawnList[ev][0][1]==1 && spawn.memory.spawnList[ev][0][0]==0 &&
+                        spawn.memory.spawnList[ev][0][3][0]==spawn.memory.harvest_pos[c-1][0]&&
+                        spawn.memory.spawnList[ev][0][3][1]==spawn.memory.harvest_pos[c-1][1]){
+                            spawn.memory.spawnList.splice(ev,1);
+                            ev-=1;
+                        }
+                    }
                     spawn.memory.building_container=0;
                 }
                 }

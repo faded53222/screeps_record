@@ -12,13 +12,15 @@ var roleUpgrader = {
             }
         }
         else {
-            var target;
-            if(Game.spawns[creep.memory.mother].memory.urgent_produce==1){
+            if(Game.spawns[creep.memory.mother].memory.urgent_produce==1 || Game.spawns[creep.memory.mother].memory.renewing==1){
                 var target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                     filter: (s) => (s.structureType == STRUCTURE_STORAGE
                                  || s.structureType == STRUCTURE_CONTAINER)
                                  && s.energy > 0
                 });                    
+                if(creep.withdraw(target,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target);
+                }  
             }
             else{
                 var target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
@@ -28,10 +30,11 @@ var roleUpgrader = {
                                  || s.structureType == STRUCTURE_CONTAINER)
                                  && s.energy > 0
                 });
+                if(creep.withdraw(target,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target);
+                }  
             }
-            if(creep.withdraw(target,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
-            }  
+
         }
 	}
 };
