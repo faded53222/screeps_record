@@ -1,4 +1,4 @@
-var roleRepairer = {
+var rolewallRepairer = {
     run: function(creep) {
 	    if(creep.memory.repairing && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.repairing = false;
@@ -32,8 +32,8 @@ var roleRepairer = {
 	        if(labi==1){
                 var targets = creep.room.find(FIND_STRUCTURES, {
                     filter: object => object.hits < object.hitsMax
-                    && object.structureType!=STRUCTURE_WALL
-                    && object.structureType!=STRUCTURE_RAMPART
+                    &&(object.structureType==STRUCTURE_WALL
+                    || object.structureType!=STRUCTURE_RAMPART)
                 });
 	            targets.sort((a,b) =>a.hits - b.hits);
 	            if(targets.length > 0) {
@@ -69,4 +69,4 @@ var roleRepairer = {
 	    }
     }
 };
-module.exports = roleRepairer;
+module.exports = rolewallRepairer;

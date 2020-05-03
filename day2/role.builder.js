@@ -1,4 +1,4 @@
-var biuld_priority_lis=[STRUCTURE_EXTENSION,STRUCTURE_ROAD,STRUCTURE_TOWER,STRUCTURE_CONTAINER];
+var biuld_priority_lis=[STRUCTURE_WALL,STRUCTURE_RAMPART,STRUCTURE_EXTENSION,STRUCTURE_ROAD,STRUCTURE_TOWER,STRUCTURE_CONTAINER];
 var roleBuilder = {
     run: function(creep) {
 	    if(creep.memory.building && creep.store[RESOURCE_ENERGY] == 0) {

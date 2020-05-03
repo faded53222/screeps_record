@@ -37,4 +37,9 @@ module.exports.loop = function () {
             Game.creeps[name].runRole();
         }
     }
+    var towers = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER);
+    for (let tower of towers) {
+        tower.runtower();
+    }
+    
 }

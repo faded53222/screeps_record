@@ -6,19 +6,30 @@ const creepConfigs=[ [[WORK,WORK,CARRY,MOVE], //harvester
                       [],//carrier
                       [],//defender
                       [CARRY,CARRY,MOVE],//picker
-                      [WORK,CARRY,MOVE]//repairer
+                      [WORK,CARRY,MOVE],//repairer
+                      []//wall_repairer
                      ],//lv1
                       [[WORK,WORK,WORK,WORK,WORK,MOVE], //harvester
                       [WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE],//upgrader
                       [WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE],//builder
                       [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE],//carrier
                       [],//defender
-                      [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE],//picker
-                      [WORK,CARRY,CARRY,MOVE,MOVE]//repairer
-                     ]//lv2
+                      [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE],//picker
+                      [WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE],//repairer
+                      [WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE]//wall_repairer
+                     ],//lv2
+                      [[WORK,WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE], //harvester
+                      [WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE],//upgrader
+                      [WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE],//builder
+                      [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE],//carrier
+                      [],//defender
+                      [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE],//picker
+                      [],//repairer
+                      [WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE]//wall_repairer
+                     ]//lv3
                     ]
 
-var role_name_lis=['harvester','upgrader','builder','carrier','defender','picker','repairer'];
+var role_name_lis=['harvester','upgrader','builder','carrier','defender','picker','repairer','wall_repairer'];
 Spawn.prototype.construct=function(struct){
   for(let eve of this.memory.constructList){
         if(eve[0]==struct[0] && eve[1]==struct[1] && eve[2]==struct[2]){
@@ -49,7 +60,7 @@ Spawn.prototype.work = function() {
         }
     }
     if(this.memory.renew_lis.length>0){
-        Game.creeps[this.memory.renew_lis[0]].memory.renewing=1;        
+        Game.creeps[this.memory.renew_lis[0]].memory.renewing=1;
     }
     if (!(!this.memory.constructList || this.memory.constructList.length == 0)){
         for(var jj=0;jj<this.memory.constructList.length;jj++){
@@ -115,19 +126,22 @@ Spawn.prototype.mainSpawn = function(task_urgency) {
         var spawnSuccess=this.spawnCreep(Body, Name, {memory: {role: task[0],lv: task[1],mother: this.name,site1: task[2],site2: task[3], harvesting: true,reborn:1} });   
     }
     if(task[0]==1){
-        var spawnSuccess=this.spawnCreep(Body, Name, {memory: {role: task[0],lv: task[1],mother: this.name,carrying: false} });                
+        var spawnSuccess=this.spawnCreep(Body, Name, {memory: {role: task[0],lv: task[1],mother: this.name,carrying: false,reborn:1} });                
     }
     if(task[0]==2){
-        var spawnSuccess=this.spawnCreep(Body, Name, {memory: {role: task[0],lv: task[1],mother: this.name,building: false} });                
+        var spawnSuccess=this.spawnCreep(Body, Name, {memory: {role: task[0],lv: task[1],mother: this.name,building: false,reborn:1} });  
     }
     if(task[0]==3){
         var spawnSuccess=this.spawnCreep(Body, Name, {memory: {role: task[0],lv: task[1],mother: this.name,site1: task[2],carrying: false,reborn:1} }); 
     }
     if(task[0]==5){
-        var spawnSuccess=this.spawnCreep(Body, Name, {memory: {role: task[0],lv: task[1],mother: this.name} }); 
+        var spawnSuccess=this.spawnCreep(Body, Name, {memory: {role: task[0],lv: task[1],mother: this.name,picking:false,reborn:1} }); 
     }
     if(task[0]==6){
-        var spawnSuccess=this.spawnCreep(Body, Name, {memory: {role: task[0],lv: task[1],mother: this.name,repairing: false,repair_site:[-1,-1]} }); 
+        var spawnSuccess=this.spawnCreep(Body, Name, {memory: {role: task[0],lv: task[1],mother: this.name,repairing: false,repair_site:[-1,-1],reborn:1} }); 
+    }
+    if(task[0]==7){
+        var spawnSuccess=this.spawnCreep(Body, Name, {memory: {role: task[0],lv: task[1],mother: this.name,repairing: false,repair_site:[-1,-1],reborn:1} }); 
     }
     if(this.spawning){
         this.memory.urgent_produce=1;

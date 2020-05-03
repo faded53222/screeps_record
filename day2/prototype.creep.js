@@ -5,7 +5,8 @@ var rolecarrier = require('role.carrier');
 var roledefender = require('role.defender');
 var rolepicker = require('role.picker');
 var rolerepairer = require('role.repairer');
-var role_lis=[roleharvester,roleupgrader,rolebuilder,rolecarrier,roledefender,rolepicker,rolerepairer];
+var rolewall_repairer = require('role.wall_repairer');
+var role_lis=[roleharvester,roleupgrader,rolebuilder,rolecarrier,roledefender,rolepicker,rolerepairer,rolewall_repairer];
 Creep.prototype.runRole=function () {
     if(this.hits<this.hitsMax && this.memory.lv<=2){
         this.suicide();

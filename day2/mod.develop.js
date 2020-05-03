@@ -1,3 +1,115 @@
+function build_near(spawn,posi,max_num,b_thing){
+    var ln=0;
+    while(1){
+        for(var j=2;;j+=1){
+            for(let x0 of [posi[0]-j,posi[0]+j]){
+                for(var y0=posi[1]-j;y0<=posi[1]+j;y0+=2){
+                    var labj=0;
+                    for(let con of spawn.memory.constructList){
+                        if(con[0]==x0 && con[1]==y0){
+                            labj=1;
+                            break;
+                        }
+                    }
+                    if(labj==1){
+                        continue;
+                    }
+                    var things=spawn.room.lookAt(x0,y0);
+                    for(var tem=0;tem<things.length;tem++){
+                        if(things[tem]['type']=='creep'){
+                            things.splice(tem,1);
+                            tem-=1;
+                        }
+                    }
+                    if(things.length==1 && things[0]['type']=='terrain' && things[0]['terrain']!='wall'){
+                        spawn.construct([x0,y0,b_thing]);
+                        for(let tx of [-1,0,1]){
+                            for(let ty of [-1,0,1]){
+                                var tv=Math.abs(tx)+Math.abs(ty);
+                                if(!(tv==2 || tv==0)){
+                                    var things=spawn.room.lookAt(x0+tx,y0+ty);
+                                    for(var tem=0;tem<things.length;tem++){
+                                        if(things[tem]['type']=='creep'){
+                                            things.splice(tem,1);
+                                            tem-=1;
+                                        }
+                                    }
+                                    if(things.length==1 && things[0]['type']=='terrain' && things[0]['terrain']!='wall'){
+                                       spawn.construct([x0+tx,y0+ty,STRUCTURE_ROAD]); 
+                                    }
+                                }
+                            }
+                        }
+                        ln+=1;
+                        if(ln==max_num){
+                            break;
+                        }
+                    }
+                }
+                if(ln==max_num){
+                    break;
+                }
+            }
+            if(ln==max_num){
+                break;
+            }
+            for(let y0 of [posi[1]-j,posi[1]+j]){
+                for(var x0=posi[0]-j+2;x0<=posi[0]+j-2;x0+=2){
+                    var labj=0;
+                    for(let con of spawn.memory.constructList){
+                        if(con[0]==x0 && con[1]==y0){
+                            labj=1;
+                            break;
+                        }
+                    }
+                    if(labj==1){
+                        continue;
+                    }
+                    var things=spawn.room.lookAt(x0,y0);
+                    for(var tem=0;tem<things.length;tem++){
+                        if(things[tem]['type']=='creep'){
+                            things.splice(tem,1);
+                            tem-=1;
+                        }
+                    }
+                    if(things.length==1 && things[0]['type']=='terrain' && things[0]['terrain']!='wall'){
+                        spawn.construct([x0,y0,b_thing]);
+                        for(let tx of [-1,0,1]){
+                            for(let ty of [-1,0,1]){
+                                var tv=Math.abs(tx)+Math.abs(ty);
+                                if(!(tv==2 || tv==0)){
+                                var things=spawn.room.lookAt(x0+tx,y0+ty);
+                                for(var tem=0;tem<things.length;tem++){
+                                    if(things[tem]['type']=='creep'){
+                                        things.splice(tem,1);
+                                        tem-=1;
+                                    }
+                                }
+                                if(things.length==1 && things[0]['type']=='terrain' && things[0]['terrain']!='wall'){
+                                   spawn.construct([x0+tx,y0+ty,STRUCTURE_ROAD]); 
+                                }
+                                }
+                            }
+                        }
+                        ln+=1;
+                        if(ln==max_num){
+                            break;
+                        }
+                    }
+                }
+                if(ln==max_num){
+                    break;
+                }
+            }
+        if(ln==max_num){
+            break;
+        }
+        }
+        if(ln==max_num){
+            break;
+        }
+    }
+}
 var modDevelop = {
     run: function(spawn) {
         if(typeof(spawn.memory.lv)=='undefined' || spawn.memory.lv<0){
@@ -124,100 +236,10 @@ var modDevelop = {
              spawn.addTask([5,1]);
              spawn.addTask([6,1]); 
         }
-        if(spawn.memory.lv==1 && spawn.room.controller.level==2){
+        if(spawn.memory.lv==1 && spawn.room.controller.level>=2){
             spawn.memory.lv+=1;
             spawn.memory.building_container=1;
-            var ln=0;
-            var max_num=5;
-            while(1){
-                for(var j=2;;j+=1){
-                    for(let x0 of [spawn.pos.x-j,spawn.pos.x+j]){
-                        for(var y0=spawn.pos.y-j;y0<=spawn.pos.y+j;y0+=2){
-                            var things=spawn.room.lookAt(x0,y0);
-                            for(var tem=0;tem<things.length;tem++){
-                                if(things[tem]['type']=='creep'){
-                                    things.splice(tem,1);
-                                    tem-=1;
-                                }
-                            }
-                            if(things.length==1 && things[0]['type']=='terrain' && things[0]['terrain']!='wall'){
-                                spawn.construct([x0,y0,STRUCTURE_EXTENSION]);
-                                for(let tx of [-1,0,1]){
-                                    for(let ty of [-1,0,1]){
-                                        var tv=Math.abs(tx)+Math.abs(ty);
-                                        if(!(tv==2 || tv==0)){
-                                            var things=spawn.room.lookAt(x0+tx,y0+ty);
-                                            for(var tem=0;tem<things.length;tem++){
-                                                if(things[tem]['type']=='creep'){
-                                                    things.splice(tem,1);
-                                                    tem-=1;
-                                                }
-                                            }
-                                            if(things.length==1 && things[0]['type']=='terrain' && things[0]['terrain']!='wall'){
-                                               spawn.construct([x0+tx,y0+ty,STRUCTURE_ROAD]); 
-                                            }
-                                        }
-                                    }
-                                }
-                                ln+=1;
-                                if(ln==max_num){
-                                    break;
-                                }
-                            }
-                        }
-                        if(ln==max_num){
-                            break;
-                        }
-                    }
-                    if(ln==max_num){
-                        break;
-                    }
-                    for(let y0 of [spawn.pos.y-j,spawn.pos.y+j]){
-                        for(var x0=spawn.pos.x-j+2;x0<=spawn.pos.x+j-2;x0+=2){
-                            var things=spawn.room.lookAt(x0,y0);
-                            for(var tem=0;tem<things.length;tem++){
-                                if(things[tem]['type']=='creep'){
-                                    things.splice(tem,1);
-                                    tem-=1;
-                                }
-                            }
-                            if(things.length==1 && things[0]['type']=='terrain' && things[0]['terrain']!='wall'){
-                                spawn.construct([x0,y0,STRUCTURE_EXTENSION]);
-                                for(let tx of [-1,0,1]){
-                                    for(let ty of [-1,0,1]){
-                                        var tv=Math.abs(tx)+Math.abs(ty);
-                                        if(!(tv==2 || tv==0)){
-                                        var things=spawn.room.lookAt(x0+tx,y0+ty);
-                                        for(var tem=0;tem<things.length;tem++){
-                                            if(things[tem]['type']=='creep'){
-                                                things.splice(tem,1);
-                                                tem-=1;
-                                            }
-                                        }
-                                        if(things.length==1 && things[0]['type']=='terrain' && things[0]['terrain']!='wall'){
-                                           spawn.construct([x0+tx,y0+ty,STRUCTURE_ROAD]); 
-                                        }
-                                        }
-                                    }
-                                }
-                                ln+=1;
-                                if(ln==max_num){
-                                    break;
-                                }
-                            }
-                        }
-                        if(ln==max_num){
-                            break;
-                        }
-                    }
-                if(ln==max_num){
-                    break;
-                }
-                }
-                if(ln==max_num){
-                    break;
-                }
-            }
+            build_near([spawn.pos.x,spawn.pos.y],5,STRUCTURE_EXTENSION);
         }
         if(spawn.memory.lv==2){
             if(spawn.memory.capacity_lv==1 && spawn.room.energyCapacityAvailable>=550){
@@ -319,7 +341,43 @@ var modDevelop = {
                 }
                 }
             }
-        spawn.work();
+        if(spawn.memory.lv==2 && spawn.room.controller.level>=3 && spawn.memory.building_container==0){
+            spawn.memory.lv+=1;
+            build_near(spawn,[spawn.pos.x,spawn.pos.y],1,STRUCTURE_TOWER)
+            build_near(spawn,[spawn.pos.x,spawn.pos.y],5,STRUCTURE_EXTENSION);
+        }
+        if(spawn.memory.capacity_lv==2 && spawn.room.energyCapacityAvailable>=800){
+            spawn.memory.capacity_lv+=1;
+            for(var c=0;c<spawn.memory.harvest_pos.length;c++){
+               spawn.addUrgentTask([3,3,[spawn.memory.harvest_pos[c][0],spawn.memory.harvest_pos[c][1]]]);
+               spawn.addUrgentTask([0,3,[spawn.memory.sources_list[c][0],spawn.memory.sources_list[c][1]],[spawn.memory.harvest_pos[c][0],spawn.memory.harvest_pos[c][1]]]);  
+            }
+            spawn.addTask([1,3]);
+            spawn.addTask([5,3]);
+            spawn.addTask([7,3]);
+            for(var jj=0;jj<2;jj++){
+                spawn.addTask([2,3]);
+            }
+            for(var ev=0;ev<spawn.memory.spawnList.length;ev++){
+                if(spawn.memory.spawnList[ev][0][1]<3){
+                    spawn.memory.spawnList.splice(ev,1);
+                    ev-=1;
+                }
+            }
+            for(var name in Game.creeps){
+                if(Game.creeps[name].memory.lv<3 && Game.creeps[name].memory.role!=5){
+                    Game.creeps[name].Recycle();
+                }
+            }
+        }
+        if(spawn.memory.spawnList.length==0){
+            for(var name in Game.creeps){
+                if(Game.creeps[name].memory.lv<spawn.memory.capacity_lv && Game.creeps[name].memory.role==5){
+                    Game.creeps[name].Recycle();
+                }
+            }            
+        }
+            spawn.work();
     }
 };
 module.exports = modDevelop;
